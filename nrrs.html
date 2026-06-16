@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIGINA BREND — Ayollar Kiyim Do'koni</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card-bg: #1a1a1a;
+    --border: #2a2a2a;
+    --gold: #f5c842;
+    --gold-light: #ffd966;
+    --gold-dark: #c9a227;
+    --white: #f9f6ef;
+    --gray: #888888;
+    --text: #e8e0cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* WELCOME OVERLAY */
+  #welcome-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    animation: fadeOutOverlay 1s ease 3s forwards;
+  }
+  #welcome-overlay .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 5rem);
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+  #welcome-overlay .welcome-text {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    color: var(--text);
+    letter-spacing: 0.1em;
+    text-align: center;
+    font-style: italic;
+  }
+  #welcome-overlay .welcome-line {
+    width: 120px;
+    height: 2px;
+    background: var(--gold);
+    animation: expandLine 1.5s ease 0.5s both;
+  }
+  @keyframes expandLine {
+    from { width: 0; }
+    to { width: 120px; }
+  }
+  @keyframes fadeOutOverlay {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  /* HEADER */
+  header {
+    background: var(--dark);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    gap: 20px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .logo span {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  /* SEARCH */
+  .search-bar {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    background: #222;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 10px 20px 10px 44px;
+    color: var(--white);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar input::placeholder { color: #666; }
+  .search-bar input:focus { border-color: var(--gold); }
+  .search-bar svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+  #search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0; right: 0;
+    background: #1e1e1e;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+    z-index: 200;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  #search-results.show { display: block; }
+  .search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid #222;
+  }
+  .search-result-item:hover { background: #2a2a2a; }
+  .search-result-item img {
+    width: 50px; height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #333;
+  }
+  .search-result-item .info { flex: 1; }
+  .search-result-item .info .name { font-size: 0.85rem; color: var(--white); }
+  .search-result-item .info .price { font-size: 0.8rem; color: var(--gold); margin-top: 2px; }
+  .search-result-item .badge {
+    font-size: 0.7rem;
+    background: var(--gold);
+    color: #000;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  /* CART BUTTON */
+  .cart-btn {
+    position: relative;
+    background: var(--gold);
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .cart-btn:hover { background: var(--gold-light); }
+  .cart-count {
+    background: #000;
+    color: var(--gold);
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  /* NAV CATEGORIES */
+  nav {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 40px;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav button {
+    background: none;
+    border: none;
+    color: var(--gray);
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav button:hover { color: var(--gold); }
+  nav button.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* HERO BANNER */
+  .hero {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a1200 50%, #0f0f0f 100%);
+    padding: 60px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    color: var(--gray);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+  }
+  .sale-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* PRODUCTS GRID */
+  main {
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-sub {
+    color: var(--gray);
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+    letter-spacing: 0.05em;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+  }
+
+  .product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .product-card:hover { transform: translateY(-4px); border-color: var(--gold-dark); }
+
+  .product-img-wrap {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: #fff;
+  }
+  .product-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .product-card:hover .product-img-wrap img { transform: scale(1.04); }
+
+  .discount-tag {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .new-tag {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: #333;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--gold-dark);
+  }
+
+  .product-info {
+    padding: 16px;
+  }
+  .product-name {
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .product-category {
+    font-size: 0.75rem;
+    color: var(--gray);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .product-price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .price-current {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .price-old {
+    font-size: 0.82rem;
+    color: #555;
+    text-decoration: line-through;
+  }
+
+  .product-options {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .opt-pill {
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #333;
+    font-size: 0.72rem;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .opt-pill:hover, .opt-pill.sel {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(245,200,66,0.08);
+  }
+  .color-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .color-dot.sel, .color-dot:hover { border-color: var(--gold); }
+
+  .add-cart-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    border-radius: 30px;
+    padding: 9px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .add-cart-btn:hover {
+    background: var(--gold);
+    color: #000;
+  }
+
+  /* CART SIDEBAR */
+  #cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  #cart-overlay.open { opacity: 1; pointer-events: all; }
+
+  #cart-sidebar {
+    position: fixed;
+    top: 0; right: 0;
+    width: 420px;
+    max-width: 100vw;
+    height: 100vh;
+    background: var(--dark);
+    border-left: 1px solid var(--border);
+    z-index: 600;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+  }
+  #cart-sidebar.open { transform: translateX(0); }
+
+  .cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+  }
+  .close-cart {
+    background: none;
+    border: none;
+    color: var(--gray);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .close-cart:hover { color: var(--gold); }
+
+  #cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+  #cart-items::-webkit-scrollbar { width: 4px; }
+  #cart-items::-webkit-scrollbar-track { background: #111; }
+  #cart-items::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .cart-empty {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--gray);
+  }
+  .cart-empty svg { opacity: 0.3; margin-bottom: 16px; }
+  .cart-empty p { font-size: 0.9rem; }
+
+  .cart-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #222;
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .cart-item img {
+    width: 72px; height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-size: 0.9rem; color: var(--white); margin-bottom: 4px; }
+  .cart-item-meta { font-size: 0.75rem; color: var(--gray); margin-bottom: 10px; }
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--white);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .qty-num { font-size: 0.9rem; color: var(--white); min-width: 20px; text-align: center; }
+  .cart-item-price { color: var(--gold); font-weight: 700; font-size: 0.95rem; margin-left: auto; }
+  .remove-item {
+    background: none; border: none;
+    color: #444; font-size: 1.1rem;
+    cursor: pointer; padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .remove-item:hover { color: #e55; }
+
+  .cart-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .cart-total-label { font-size: 0.9rem; color: var(--gray); }
+  .cart-total-price { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold); }
+  .checkout-btn {
+    width: 100%;
+    background: var(--gold);
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+  .checkout-btn:hover { background: var(--gold-light); }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--gold);
+    color: #000;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 9000;
+    transition: transform 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 30px 40px;
+    text-align: center;
+    color: #444;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+  footer span { color: var(--gold-dark); }
+
+  @media (max-width: 600px) {
+    .header-top { padding: 14px 16px; gap: 10px; }
+    main { padding: 20px 16px; }
+    nav { padding: 0 16px; }
+    .hero { padding: 40px 16px; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    #cart-sidebar { width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Welcome Overlay -->
+<div id="welcome-overlay">
+  <div class="welcome-line"></div>
+  <div class="brand-name">✦ NIGINA BREND ✦</div>
+  <div class="welcome-text">Assalomu alaykum, xush kelibsiz!</div>
+  <div class="welcome-line"></div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="header-top">
+    <a href="#" class="logo">NIGINA <span>brend</span></a>
+
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="search-input" placeholder="Ko'ylak, tufli, sumka qidirish..." autocomplete="off">
+      <div id="search-results"></div>
+    </div>
+
+    <button class="cart-btn" onclick="openCart()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      Savat
+      <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+
+  <nav>
+    <button class="active" onclick="filterCat('all', this)">Hammasi</button>
+    <button onclick="filterCat('koylak', this)">Ko'ylaklar</button>
+    <button onclick="filterCat('futbolka', this)">Futbolkalar</button>
+    <button onclick="filterCat('tufli', this)">Tuflilar</button>
+    <button onclick="filterCat('sumka', this)">Sumkalar</button>
+    <button onclick="filterCat('krossovka', this)">Krossovkalar</button>
+    <button onclick="filterCat('aksessuar', this)">Aksessuarlar</button>
+  </nav>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>✦ Yangi Kolleksiya ✦</h1>
+  <p>2026 — zamonaviy ayol uchun mukammal uslub</p>
+  <span class="sale-badge">🔥 30% gacha chegirma!</span>
+</div>
+
+<!-- Main -->
+<main>
+  <div class="section-title">Tavsiya etilgan mahsulotlar</div>
+  <div class="section-sub">Eng so'nggi va ommabop mahsulotlarimiz</div>
+  <div class="products-grid" id="products-grid"></div>
+</main>
+
+<!-- Cart Overlay & Sidebar -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-sidebar">
+  <div class="cart-header">
+    <h2>🛍 Savatingiz</h2>
+    <button class="close-cart" onclick="closeCart()">✕</button>
+  </div>
+  <div id="cart-items">
+    <div class="cart-empty" id="cart-empty">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <p>Savat bo'sh</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Jami summa:</span>
+      <span class="cart-total-price" id="cart-total">0 so'm</span>
+    </div>
+    <button class="checkout-btn">Buyurtma berish →</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<footer>
+  © 2026-2027 <span>NIGINA BREND</span> — Barcha huquqlar himoyalangan &nbsp;|&nbsp; Toshkent viloyati, Nurafshon SHahar
+</footer>
+
+<script>
+// ─── PRODUCTS DATA ──────────────────────────────────────────────────────
+// Rasmlarni o'zingizning serverga yuklang va quyidagi yo'llarni o'zgartiring:
+const U1 = 'rasmlar/koylak-oq.jpeg';        // Medieval Ko'ylak
+const U2 = 'rasmlar/tufli-qora.jpeg';       // Patent Tufli
+const U3 = 'rasmlar/sumka-kuk.jpeg';        // Birkin Sumka
+const U4 = 'rasmlar/koylak-qora.jpeg';      // Off-Shoulder Ko'ylak
+const U5 = 'rasmlar/koylak-yashil.jpeg';    // Korset Ko'ylak
+const U6 = 'rasmlar/sumka-oq.jpeg';         // Mini Sumka Oq
+const U7 = 'rasmlar/tufli-patent.jpeg';     // Stiletto Tufli
+
+const ALL_PRODUCTS = [
+  { id:1,  name:"Medieval Ko'ylak — Oq",            cat:"koylak",    price:285000,  oldPrice:399000,  discount:29, img:"/home/nigina/Downloads/Shop - POEM.jpeg", colors:['#fff','#f5e6d3','#c8a87a'], sizes:['XS','S','M','L','XL'], isNew:false },
+  { id:2,  name:"Patent Teri Tufli — Qora",          cat:"tufli",     price:420000,  oldPrice:590000,  discount:29, img:"/home/nigina/Downloads/84442561758943250.jpeg", colors:['#1a1a1a','#333'],            sizes:['36','37','38','39','40'], isNew:true },
+  { id:3,  name:"Birkin Sumka — Qora",               cat:"sumka",     price:1250000, oldPrice:1600000, discount:22, img:"/home/nigina/Downloads/Bolsa Feminina com Detalhe de Corrente de Pérolas e Laço no Estilo Y2K.jpeg", colors:['#1b3a6e','#2c5282','#744210'],sizes:[], isNew:false },
+  { id:4,  name:"Off-Shoulder Ko'ylak — Qora",       cat:"koylak",    price:320000,  oldPrice:450000,  discount:29, img:"/home/nigina/Downloads/1126462925566511982.jpeg", colors:['#1a1a1a','#f5f0e8'],          sizes:['XS','S','M','L'], isNew:true },
+  { id:17, name:"Korset Ko'ylak — Oq",               cat:"koylak",   price:340000,  oldPrice:480000,  discount:29, img:"/home/nigina/Downloads/337629303330221278.jpeg", colors:['#6b8c6e','#fff','#f5e6d3'],   sizes:['XS','S','M','L','XL'], isNew:true },
+  { id:18, name:"Mini Sumka — Oq",                   cat:"sumka",     price:890000,  oldPrice:1200000, discount:26, img:"/home/nigina/Downloads/764415736765277764.jpeg", colors:['#fff','#f5c842','#1a1a1a'],    sizes:[], isNew:true },
+  { id:19, name:"Stiletto Tufli — Patent Qora",      cat:"tufli",     price:480000,  oldPrice:650000,  discount:26, img:"/home/nigina/Downloads/402579654212021360.jpeg", colors:['#1a1a1a'],                     sizes:['36','37','38','39','40','41'], isNew:false },
+  { id:5,  name:"Yoz Ko'ylagi — Gul Naqshinli",      cat:"koylak",    price:195000,  oldPrice:280000,  discount:30, img:'/home/nigina/Downloads/360288038959878474.jpeg" - 16251 Rx Eyeglasses….jpeg', colors:['#f5c842','#e07b54','#6b8c6e'], sizes:['S','M','L','XL'], isNew:true },
+  { id:6,  name:"Elegans Oq Ko'ylak",                cat:"koylak",    price:240000,  oldPrice:320000,  discount:25, img:'/home/nigina/Downloads/47498971066451466.jpeg', colors:['#fff','#f0e6d3'], sizes:['XS','S','M','L','XL'], isNew:false },
+  { id:7,  name:"Stiletto Tufli — Oq",            cat:"tufli",     price:350000,  oldPrice:480000,  discount:27, img:'/home/nigina/Downloads/444308319513107697.jpeg', colors:['#c0392b','#1a1a1a'], sizes:['36','37','38','39','40','41'], isNew:false },
+  { id:8,  name:"Klassik Tufli — Beige",             cat:"tufli",     price:310000,  oldPrice:420000,  discount:26, img:'/home/nigina/Downloads/84442561758943250.jpeg', colors:['#d4b896','#1a1a1a'], sizes:['36','37','38','39','40'], isNew:true },
+  { id:9,  name:"Teri Sumka — Roʻziviy",            cat:"sumka",     price:680000,  oldPrice:950000,  discount:28, img:'/home/nigina/Downloads/1063905111970259432.jpeg', colors:['#744210','#1a1a1a'], sizes:[], isNew:false },
+  { id:10, name:"Mini Sumka — Qora",                cat:"sumka",     price:450000,  oldPrice:620000,  discount:27, img:'/home/nigina/Downloads/999095498561933846.jpeg', colors:['#f5c842','#c0392b'], sizes:[], isNew:true },
+  { id:11, name:"Air Max Krossovka — Oq",            cat:"krossovka", price:520000,  oldPrice:720000,  discount:28, img:'/home/nigina/Downloads/939000591054113444.jpeg', colors:['#fff','#1a1a1a','#f5c842'], sizes:['36','37','38','39','40','41'], isNew:true },
+  { id:12, name:"Sport Krossovka — Qora",              cat:"krossovka", price:460000,  oldPrice:630000,  discount:27, img :'/home/nigina/Downloads/937874691152574583.jpeg', colors:['#f8b4d9','#fff'], sizes:['36','37','38','39','40'], isNew:false },
+  { id:13, name:"Basic Futbolka — Qora",             cat:"futbolka",  price:95000,   oldPrice:140000,  discount:32, img:'/home/nigina/Downloads/1017109897118662269.jpeg', colors:['#1a1a1a','#fff','#c0392b','#1b3a6e'], sizes:['XS','S','M','L','XL','XXL'], isNew:false },
+  { id:14, name:"Futbolka — Oq",                     cat:"futbolka",  price:110000,  oldPrice:160000,  discount:31, img:'/home/nigina/Downloads/1120481582315848687.jpeg', colors:['#fff','#f5e6d3','#1a1a1a'], sizes:['XS','S','M','L','XL'], isNew:true },
+  { id:15, name:"Futbolka - Bantikli",               cat:"futbolka",  price:125000,  oldPrice:175000,  discount:29, img:'/home/nigina/Downloads/Korean Style Bow Graphic Tee Aesthetic Outfit.jpeg', colors:['#f5c842','#6b8c6e','#c0392b'], sizes:['XS','S','M','L'], isNew:true },
+  { id:16, name:"Oltin Zanjir Marjon",               cat:"aksessuar", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/Кольє з жовтого золота з кульками (арт_ 352562ж).jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+  { id:17, name:"Krossovka - pink",                  cat:"krossovka", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/1060457043526098199 (copy).jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+  { id:17, name:"Krossovka",                        cat:"krossovka", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/nike m2k tekno.jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+  { id:17, name:"Oltin Zanjir Marjon",               cat:"aksessuar", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/647111040229079977.jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+  { id:19, name:"Oltin Zanjir Marjon",               cat:"aksessuar", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/14847873767951413.jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+  { id:20, name:"Oltin Zanjir Marjon",               cat:"aksessuar", price:185000,  oldPrice:260000,  discount:29, img:'/home/nigina/Downloads/940337597175760166.jpeg', colors:['#f5c842','#c0c0c0'], sizes:[], isNew:true },
+   { id:14, name:"Futbolka — Oq",                     cat:"futbolka",  price:110000,  oldPrice:160000,  discount:31, img:'/home/nigina/Downloads/757238124889269795.jpeg', colors:['#fff','#f5e6d3','#1a1a1a'], sizes:['XS','S','M','L','XL'], isNew:true },
+];
+
+// ─── CART STATE ──────────────────────────────────────────────────────────
+let cart = [];
+
+// ─── RENDER ──────────────────────────────────────────────────────────────
+function renderProducts(list) {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = list.length === 0
+    ? `<div style="grid-column:1/-1;text-align:center;padding:60px;color:#666;">Mahsulot topilmadi</div>`
+    : list.map(p => productCard(p)).join('');
+}
+
+function productCard(p) {
+  const colorDots = p.colors.map((c,i) =>
+    `<div class="color-dot${i===0?' sel':''}" style="background:${c}" onclick="event.stopPropagation();this.parentNode.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('sel'));this.classList.add('sel')"></div>`
+  ).join('');
+  const sizePills = p.sizes.map((s,i) =>
+    `<span class="opt-pill${i===0?' sel':''}" onclick="event.stopPropagation();this.parentNode.querySelectorAll('.opt-pill').forEach(sp=>sp.classList.remove('sel'));this.classList.add('sel')">${s}</span>`
+  ).join('');
+  return `<div class="product-card">
+    <div class="product-img-wrap">
+      <img src="${p.img}" alt="${p.name}" loading="lazy">
+      ${p.discount ? `<span class="discount-tag">−${p.discount}%</span>` : ''}
+      ${p.isNew ? `<span class="new-tag">YANGI</span>` : ''}
+    </div>
+    <div class="product-info">
+      <div class="product-name">${p.name}</div>
+      <div class="product-category">${catLabel(p.cat)}</div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">${colorDots}</div>
+      ${sizePills ? `<div class="product-options">${sizePills}</div>` : ''}
+      <div class="product-price-row">
+        <span class="price-current">${p.price.toLocaleString('uz')} so'm</span>
+        ${p.oldPrice ? `<span class="price-old">${p.oldPrice.toLocaleString('uz')}</span>` : ''}
+      </div>
+      <button class="add-cart-btn" onclick="addToCart(${p.id})">+ Savatga qo'shish</button>
+    </div>
+  </div>`;
+}
+
+function catLabel(c) {
+  const m = {koylak:"Ko'ylaklar",futbolka:"Futbolkalar",tufli:"Tuflilar",sumka:"Sumkalar",krossovka:"Krossovkalar",aksessuar:"Aksessuarlar"};
+  return m[c] || c;
+}
+
+// ─── FILTER ──────────────────────────────────────────────────────────────
+function filterCat(cat, btn) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat === 'all' ? ALL_PRODUCTS : ALL_PRODUCTS.filter(p => p.cat === cat));
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+
+searchInput.addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  if (!q) { searchResults.classList.remove('show'); return; }
+  const matches = ALL_PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || catLabel(p.cat).toLowerCase().includes(q)
+  );
+  searchResults.innerHTML = matches.length === 0
+    ? `<div style="padding:14px 16px;color:#666;font-size:0.85rem">Natija topilmadi</div>`
+    : matches.map(p => `
+      <div class="search-result-item" onclick="jumpToProduct(${p.id})">
+        <img src="${p.img}" alt="${p.name}">
+        <div class="info">
+          <div class="name">${p.name}</div>
+          <div class="price">${p.price.toLocaleString('uz')} so'm</div>
+        </div>
+        ${p.discount ? `<span class="badge">−${p.discount}%</span>` : ''}
+      </div>`).join('');
+  searchResults.classList.add('show');
+});
+
+function jumpToProduct(id) {
+  searchResults.classList.remove('show');
+  searchInput.value = '';
+  renderProducts(ALL_PRODUCTS);
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.product-card');
+    const idx = ALL_PRODUCTS.findIndex(p => p.id === id);
+    if (cards[idx]) cards[idx].scrollIntoView({ behavior:'smooth', block:'center' });
+  }, 100);
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-bar')) searchResults.classList.remove('show');
+});
+
+// ─── CART ────────────────────────────────────────────────────────────────
+function addToCart(id) {
+  const p = ALL_PRODUCTS.find(x => x.id === id);
+  const ex = cart.find(x => x.id === id);
+  if (ex) ex.qty++; else cart.push({...p, qty:1});
+  updateCartUI();
+  showToast(`"${p.name}" savatga qo'shildi ✓`);
+  openCart();
+}
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCartUI();
+}
+function changeQty(id, delta) {
+  const item = cart.find(x => x.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id); else updateCartUI();
+}
+function updateCartUI() {
+  const total = cart.reduce((s,x) => s + x.price * x.qty, 0);
+  const count = cart.reduce((s,x) => s + x.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('cart-total').textContent = total.toLocaleString('uz') + ' so\'m';
+  const el = document.getElementById('cart-items');
+  const empty = document.getElementById('cart-empty');
+  el.querySelectorAll('.cart-item').forEach(e => e.remove());
+  if (cart.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-meta">${catLabel(item.cat)}</div>
+        <div class="cart-item-controls">
+          <button class="qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${item.id},1)">+</button>
+          <span class="cart-item-price">${(item.price*item.qty).toLocaleString('uz')} so'm</span>
+          <button class="remove-item" onclick="removeFromCart(${item.id})">✕</button>
+        </div>
+      </div>`;
+    el.appendChild(div);
+  });
+}
+function openCart() {
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-sidebar').classList.add('open');
+}
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-sidebar').classList.remove('open');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+renderProducts(ALL_PRODUCTS);
+setTimeout(() => openCart(), 3500);
+</script>
+</body>
+</html>
